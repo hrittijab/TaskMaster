@@ -55,6 +55,17 @@
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-core</artifactId>
+            <version>1.2.1</version>  <!-- You can check for the latest version here: https://mvnrepository.com/artifact/com.amazonaws/aws-lambda-java-core -->
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-events</artifactId>
+            <version>3.11.0</version> <!-- You can check for the latest version on https://mvnrepository.com/artifact/com.amazonaws/aws-lambda-java-events -->
+        </dependency>
+
 
         <!-- Test Dependencies -->
         <dependency>
@@ -81,11 +92,11 @@
                 <version>3.6.1</version>
             </plugin>
 
-            <!-- Exec Maven Plugin (Updated version to 1.6.0) -->
+            <!-- Exec Maven Plugin (Updated configuration) -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version> <!-- Updated to 1.6.0 -->
+                <version>1.6.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -99,5 +110,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
