@@ -1,6 +1,6 @@
-# App
+# todo-app
 
-This project contains a maven application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
+This project contains a Maven application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
 
 ## Prerequisites
 - Java 1.8+
@@ -11,28 +11,29 @@ This project contains a maven application with [AWS Java SDK 2.x](https://github
 
 Below is the structure of the generated project.
 
-```
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── package
-│   │   │       ├── App.java
-│   │   │       ├── DependencyFactory.java
-│   │   │       └── Handler.java
-│   │   └── resources
-│   │       └── simplelogger.properties
-│   └── test
-│       └── java
-│           └── package
-│               └── HandlerTest.java
-```
+├── src │   ├── main │   │   ├── java │   │   │   └── package │   │   │   ├── App.java │   │   │   ├── DependencyFactory.java │   │   │   └── Handler.java │   │   └── resources │   │   └── simplelogger.properties │   └── test │   └── java │   └── package │   └── HandlerTest.java
 
-- `App.java`: main entry of the application
-- `DependencyFactory.java`: creates the SDK client
-- `Handler.java`: you can invoke the api calls using the SDK client here.
+markdown
+Copy
+Edit
 
-#### Building the project
-```
+
+
+- `App.java`: main entry of the application  
+- `DependencyFactory.java`: creates the SDK client  
+- `Handler.java`: you can invoke the API calls using the SDK client here.
+
+### Building the project
+```bash
 mvn clean package
-```
 
+
+
+---
+
+### ✅ Then Run:
+After saving the fixed file:
+
+```bash
+git add README.md
+git rebase --continue
