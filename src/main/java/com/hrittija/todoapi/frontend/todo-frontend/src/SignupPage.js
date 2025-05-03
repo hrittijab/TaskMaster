@@ -19,7 +19,7 @@ function SignupPage() {
         },
         body: JSON.stringify({
           email,
-          passwordHash: password,  // backend expects passwordHash
+          passwordHash: password,
           firstName,
           lastName,
         }),
@@ -37,42 +37,118 @@ function SignupPage() {
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '100px' }}>
-      <h2>Signup</h2>
-      <form onSubmit={handleSignup}>
-        <input
-          type="text"
-          placeholder="First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-        /><br/><br/>
-        <input
-          type="text"
-          placeholder="Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          required
-        /><br/><br/>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        /><br/><br/>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /><br/><br/>
-        <button type="submit">Signup</button>
-      </form>
-      <p>Already have an account? <Link to="/login">Login here</Link></p>
+    <div style={styles.container}>
+      <div style={styles.formBox}>
+        <h2 style={styles.title}>Signup</h2>
+        <form onSubmit={handleSignup}>
+          <input
+            type="text"
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+            style={styles.input}
+          /><br/>
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            style={styles.input}
+          /><br/>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={styles.input}
+          /><br/>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={styles.input}
+          /><br/>
+          <button
+            type="submit"
+            style={styles.signupButton}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#004494'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#0056b3'}
+          >
+            Signup
+          </button>
+        </form>
+        <p style={styles.loginText}>
+          Already have an account?{' '}
+          <Link to="/login" style={styles.link}>
+            Login here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    animation: 'fadeIn 1s ease-in-out',
+  },
+  formBox: {
+    backgroundColor: 'white',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+    width: '90%',
+    maxWidth: '400px',
+    textAlign: 'center',
+    animation: 'slideUp 1s ease-in-out',
+  },
+  title: {
+    marginBottom: '20px',
+    fontSize: '26px',
+    fontWeight: '600',
+    color: '#333',
+  },
+  input: {
+    width: '100%',
+    padding: '12px',
+    borderRadius: '6px',
+    border: '1px solid #ccc',
+    marginBottom: '20px',
+    fontSize: '16px',
+  },
+  signupButton: {
+    width: '100%',
+    padding: '12px',
+    marginTop: '10px',
+    border: 'none',
+    borderRadius: '6px',
+    color: '#fff',
+    fontWeight: '500',
+    fontSize: '16px',
+    backgroundColor: '#0056b3',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+  },
+  loginText: {
+    marginTop: '20px',
+    color: '#555',
+    fontSize: '14px',
+  },
+  link: {
+    color: '#0056b3',
+    textDecoration: 'none',
+    fontWeight: '500',
+  },
+};
 
 export default SignupPage;

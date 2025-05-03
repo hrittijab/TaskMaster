@@ -11,12 +11,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
+    // Signup endpoint
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody User user) {
         boolean success = userService.registerUser(user);
@@ -27,6 +29,7 @@ public class UserController {
         }
     }
 
+    // Login endpoint
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
         try {
@@ -45,6 +48,21 @@ public class UserController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login request format");
+        }
+    }
+
+    // ⭐ Get User by Email endpoint
+    @GetMapping("/getUser")
+    public ResponseEntity<?> getUser(@RequestParam String email) {
+        try {
+            User user = userService.getUserByEmail(email);
+            if (user != null) {
+                return ResponseEntity.ok(user); // returns full User object (JSON with firstName, lastName, etc.)
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
         }
     }
 }

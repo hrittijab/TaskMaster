@@ -22,7 +22,6 @@ public class UserService {
     }
 
     public boolean registerUser(User user) {
-        // Check if email already exists
         Map<String, AttributeValue> key = new HashMap<>();
         key.put("email", AttributeValue.builder().s(user.getEmail()).build());
 
@@ -34,11 +33,9 @@ public class UserService {
         GetItemResponse getResponse = dynamoDbClient.getItem(getRequest);
 
         if (getResponse.hasItem()) {
-            // Email already exists
-            return false;
+            return false; // email already exists
         }
 
-        // Save new user (hash the password first!)
         String hashedPassword = passwordEncoder.encode(user.getPasswordHash());
 
         Map<String, AttributeValue> item = new HashMap<>();
@@ -54,32 +51,49 @@ public class UserService {
 
         dynamoDbClient.putItem(putRequest);
         return true;
-    };
+    }
+
     public boolean loginUser(String email, String password) {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put("email", AttributeValue.builder().s(email).build());
-    
+
         GetItemRequest getRequest = GetItemRequest.builder()
                 .tableName(tableName)
                 .key(key)
                 .build();
-    
+
         GetItemResponse getResponse = dynamoDbClient.getItem(getRequest);
-    
+
         if (!getResponse.hasItem()) {
-            System.out.println("User not found for email: " + email);
             return false;
         }
-    
+
         String storedPasswordHash = getResponse.item().get("passwordHash").s();
-        System.out.println("Stored password hash for " + email + ": " + storedPasswordHash);
-        System.out.println("Incoming password: " + password);
-    
-        boolean matches = passwordEncoder.matches(password, storedPasswordHash);
-        System.out.println("Password match result: " + matches);
-        
-        return matches;
+        return passwordEncoder.matches(password, storedPasswordHash);
     }
-    
-    
+
+    // ⭐ Get User by Email (needed for welcome message)
+    public User getUserByEmail(String email) {
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("email", AttributeValue.builder().s(email).build());
+
+        GetItemRequest request = GetItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .build();
+
+        GetItemResponse response = dynamoDbClient.getItem(request);
+
+        if (response.hasItem()) {
+            Map<String, AttributeValue> item = response.item();
+            return new User(
+                item.get("email").s(),
+                item.get("firstName").s(),
+                item.get("lastName").s(),
+                item.get("passwordHash").s()
+            );
+        } else {
+            return null;
+        }
+    }
 }

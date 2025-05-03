@@ -15,13 +15,13 @@ public class WebConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3002")); // your frontend
+        config.setAllowedOriginPatterns(Arrays.asList("*")); // <-- allow any origin
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setMaxAge(3600L); // optional: cache the preflight response for 1 hour
+        config.setMaxAge(3600L); // optional cache
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/**", config); // <-- allow all endpoints, not just /api/**
 
         return new CorsFilter(source);
     }
