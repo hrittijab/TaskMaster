@@ -6,6 +6,8 @@ import AddTaskPage from './AddTaskPage';
 import ViewTasksPage from './ViewTasksPage';
 import EditTaskPage from './EditTaskPage';
 import TaskDetailsPage from './TaskDetailsPage';
+import PickBackgroundPage from './PickBackgroundPage';
+
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/view-tasks" element={<ViewTasksPage />} />
         <Route path="/edit-task/:id" element={<EditTaskPage />} />
         <Route path="/task-details/:id" element={<TaskDetailsPage />} />
+        <Route path="/pick-background" element={<PickBackgroundPage />} />
+
       </Routes>
     </Router>
   );

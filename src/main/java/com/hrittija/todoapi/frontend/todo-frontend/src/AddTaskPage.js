@@ -10,48 +10,22 @@ function AddTaskPage() {
   const [backgroundChoice, setBackgroundChoice] = useState('');
   const navigate = useNavigate();
 
-  const backgrounds = [
-    { name: 'Beach', url: 'beach.jpg' },
-    { name: 'Coffee Lover', url: 'coffeelover.jpg' },
-    { name: 'Flight View', url: 'flightview.jpg' },
-    { name: 'Forest', url: 'forest.jpg' },
-    { name: 'Gym', url: 'gym.jpg' },
-    { name: 'Harry Potter', url: 'harrypotter.jpg' },
-    { name: 'Library', url: 'library.jpg' },
-    { name: 'Mountain', url: 'mountain.jpg' },
-    { name: 'Party', url: 'party.jpg' },
-    { name: 'Pink', url: 'pink.jpg' },
-    { name: 'Sunrise', url: 'sunrise.jpg' },
-  ];
-
   useEffect(() => {
-    console.log('PAGE MOUNT: Loading backgroundChoice from localStorage first.');
-    const storedBackground = localStorage.getItem('backgroundChoice') || 'default.jpg';
-    setBackgroundChoice(storedBackground);
-    console.log('Local backgroundChoice loaded at mount:', storedBackground);
-
     const userEmail = localStorage.getItem('userEmail');
-    console.log('Checking userEmail:', userEmail);
-
     if (!userEmail) {
       navigate('/login');
-      return;
+    } else {
+      fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setFirstName(data.firstName || '');
+          if (data.backgroundChoice) {
+            setBackgroundChoice(data.backgroundChoice);
+            localStorage.setItem('backgroundChoice', data.backgroundChoice);
+          }
+        })
+        .catch((err) => console.error('Failed to fetch user info:', err));
     }
-
-    fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log('Fetched user data:', data);
-
-        if (data.backgroundChoice) {
-          console.log('Setting backgroundChoice from backend:', data.backgroundChoice);
-          localStorage.setItem('backgroundChoice', data.backgroundChoice);
-          setBackgroundChoice(data.backgroundChoice);
-        }
-      })
-      .catch((err) => {
-        console.error('Error fetching user:', err);
-      });
   }, [navigate]);
 
   const handleAddTask = async (e) => {
@@ -92,27 +66,8 @@ function AddTaskPage() {
     navigate('/view-tasks');
   };
 
-  const handlePickBackground = async (selectedBackground) => {
-    const userEmail = localStorage.getItem('userEmail');
-    console.log('User selected new background:', selectedBackground);
-
-    try {
-      const response = await fetch(`http://localhost:8080/api/users/${encodeURIComponent(userEmail)}/background`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(selectedBackground),
-      });
-
-      if (response.ok) {
-        console.log('Background updated on server!');
-        localStorage.setItem('backgroundChoice', selectedBackground);
-        setBackgroundChoice(selectedBackground);
-      } else {
-        console.error('Failed to save background');
-      }
-    } catch (error) {
-      console.error('Error updating background:', error);
-    }
+  const handlePickBackground = () => {
+    navigate('/pick-background'); // Navigate to the new background picker page
   };
 
   return (
@@ -126,27 +81,7 @@ function AddTaskPage() {
         {firstName && <h2 style={styles.welcome}>Welcome, {firstName}!</h2>}
         <h3 style={styles.title}>Add a New Task</h3>
 
-        <div>
-          <h4>Pick Your Background:</h4>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
-            {backgrounds.map(bg => (
-              <img
-                key={bg.name}
-                src={`/backgrounds/${bg.url}`}
-                alt={bg.name}
-                style={{
-                  width: '80px',
-                  height: '60px',
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  border: backgroundChoice === bg.url ? '3px solid #0077b6' : '2px solid #ccc',
-                  objectFit: 'cover',
-                }}
-                onClick={() => handlePickBackground(bg.url)}
-              />
-            ))}
-          </div>
-        </div>
+        <button onClick={handlePickBackground} style={styles.pickButton}>🎨 Customize Background</button>
 
         {!taskAdded ? (
           <form onSubmit={handleAddTask}>
@@ -223,6 +158,15 @@ const styles = {
     border: '1px solid #ccc',
     marginBottom: '20px',
     fontSize: '16px',
+  },
+  pickButton: {
+    backgroundColor: '#17a2b8',
+    color: 'white',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '8px',
+    marginBottom: '20px',
+    cursor: 'pointer',
   },
   addButton: {
     width: '100%',
