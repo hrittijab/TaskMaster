@@ -62,4 +62,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
         }
     }
+
+    @PutMapping("/{email}/background")
+    public ResponseEntity<String> updateBackgroundChoice(@PathVariable String email, @RequestBody String backgroundChoice) {
+        boolean updated = userService.updateUserBackground(email, backgroundChoice);
+        if (updated) {
+            return ResponseEntity.ok("Background updated successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

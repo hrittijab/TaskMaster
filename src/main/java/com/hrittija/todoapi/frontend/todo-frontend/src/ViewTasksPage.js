@@ -8,34 +8,50 @@ function ViewTasksPage() {
   const [searchText, setSearchText] = useState('');
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [dismissedTaskIds, setDismissedTaskIds] = useState([]);
+  const [backgroundChoice, setBackgroundChoice] = useState('');
   const navigate = useNavigate();
 
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchUserAndTasks = async () => {
       const userEmail = localStorage.getItem('userEmail');
       if (!userEmail) {
         navigate('/login');
         return;
       }
+  
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/user/${encodeURIComponent(userEmail)}`);
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch User
+        const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.backgroundChoice) {
+            setBackgroundChoice(userData.backgroundChoice);
+            localStorage.setItem('backgroundChoice', userData.backgroundChoice);
+          }
+        }
+  
+        // Fetch Tasks
+        const tasksResponse = await fetch(`http://localhost:8080/api/todos/user/${encodeURIComponent(userEmail)}`);
+        if (tasksResponse.ok) {
+          const data = await tasksResponse.json();
           setTasks(data);
         } else {
           console.error('Failed to fetch tasks');
         }
+  
+        const storedDismissed = JSON.parse(localStorage.getItem('dismissedTasks')) || [];
+        setDismissedTaskIds(storedDismissed);
+  
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error('Error fetching user or tasks:', error);
       }
     };
-
-    fetchTasks();
-    const storedDismissed = JSON.parse(localStorage.getItem('dismissedTasks')) || [];
-    setDismissedTaskIds(storedDismissed);
+  
+    fetchUserAndTasks();
   }, [navigate]);
+  
 
   const handleBack = () => navigate('/add-task');
 
@@ -53,8 +69,7 @@ function ViewTasksPage() {
   };
 
   const handleEdit = (taskId) => navigate(`/edit-task/${taskId}`);
-
-  const handleDetail = (taskId) => navigate(`/task-details/${taskId}`); // NEW
+  const handleDetail = (taskId) => navigate(`/task-details/${taskId}`);
 
   const handleToggleComplete = async (taskId, currentStatus) => {
     try {
@@ -95,14 +110,15 @@ function ViewTasksPage() {
   };
 
   const sortTasks = (a, b) => {
-    if (sortOption === 'dueDate') {
+    if (sortOption === 'dueDateAsc') {
       if (!a.dueDate) return 1;
       if (!b.dueDate) return -1;
       return new Date(a.dueDate) - new Date(b.dueDate);
     }
-    if (sortOption === 'priority') {
-      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
-      return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+    if (sortOption === 'dueDateDesc') {
+      if (!a.dueDate) return 1;
+      if (!b.dueDate) return -1;
+      return new Date(b.dueDate) - new Date(a.dueDate);
     }
     return 0;
   };
@@ -118,8 +134,14 @@ function ViewTasksPage() {
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
   return (
-    <div style={styles.page}>
-      {/* Top Bar */}
+    <div style={{
+      padding: '30px',
+      minHeight: '100vh',
+      backgroundImage: `url(/backgrounds/${backgroundChoice})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      textAlign: 'center',
+    }}>
       <div style={styles.topBar}>
         <h1 style={styles.heading}>📋 Your Tasks</h1>
         <div style={styles.notificationIcon} onClick={() => setNotificationsOpen(!notificationsOpen)}>
@@ -130,14 +152,12 @@ function ViewTasksPage() {
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div style={styles.progressBarContainer}>
         <div
           style={{
             ...styles.progressBarFill,
             width: `${progress}%`,
-            backgroundColor:
-              progress >= 70 ? '#4caf50' : progress >= 30 ? '#ffc107' : '#f44336',
+            backgroundColor: progress >= 70 ? '#4caf50' : progress >= 30 ? '#ffc107' : '#f44336',
           }}
         ></div>
       </div>
@@ -145,7 +165,6 @@ function ViewTasksPage() {
         {completedTasks} of {totalTasks} tasks completed {progress === 100 ? '🎯' : ''}
       </p>
 
-      {/* Notifications */}
       {notificationsOpen && (
         <div style={styles.notificationPopup}>
           <h4>🔔 Upcoming Tasks</h4>
@@ -164,7 +183,6 @@ function ViewTasksPage() {
         </div>
       )}
 
-      {/* Controls */}
       <div style={styles.controls}>
         <input
           type="text"
@@ -181,19 +199,11 @@ function ViewTasksPage() {
         </select>
         <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={styles.dropdown}>
           <option value="default">Sort By</option>
-          <option value="dueDate">Due Date</option>
-          <option value="priority">Priority</option>
+          <option value="dueDateAsc">Due Date ↑</option>
+          <option value="dueDateDesc">Due Date ↓</option>
         </select>
       </div>
 
-      {/* Legend */}
-      <div style={styles.legendBox}>
-        <span style={{ ...styles.legendItem, backgroundColor: '#e6ffe6' }}>Completed</span>
-        <span style={{ ...styles.legendItem, backgroundColor: '#ffe6e6' }}>Past Due</span>
-        <span style={{ ...styles.legendItem, backgroundColor: '#fffbe6' }}>Incomplete</span>
-      </div>
-
-      {/* Tasks */}
       {tasks.length > 0 ? (
         <div style={styles.list}>
           {tasks.filter(filterTasks).sort(sortTasks).map((task) => (
@@ -214,7 +224,6 @@ function ViewTasksPage() {
                   }}>
                     {task.taskDescription}
                   </span>
-                  {task.priority && <div style={{ fontSize: '14px', color: '#777' }}>Priority: {task.priority}</div>}
                   {task.dueDate && <div style={{ fontSize: '14px', color: '#777' }}>Due: {task.dueDate}</div>}
                 </div>
               </div>
@@ -236,7 +245,6 @@ function ViewTasksPage() {
 }
 
 const styles = {
-  page: { padding: '30px', backgroundColor: '#f4f6f8', minHeight: '100vh', textAlign: 'center' },
   topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
   heading: { fontSize: '36px', color: '#333' },
   notificationIcon: { fontSize: '28px', cursor: 'pointer', position: 'relative' },
@@ -250,10 +258,8 @@ const styles = {
   controls: { display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' },
   searchBox: { padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '250px' },
   dropdown: { padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '180px' },
-  legendBox: { display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' },
-  legendItem: { padding: '6px 12px', borderRadius: '8px', fontSize: '14px', fontWeight: '500', color: '#333' },
   list: { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px' },
-  card: { width: '320px', padding: '20px', borderRadius: '10px', boxShadow: '0px 4px 12px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', transition: 'transform 0.3s', },
+  card: { width: '320px', padding: '20px', borderRadius: '10px', boxShadow: '0px 4px 12px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', transition: 'transform 0.3s' },
   topRow: { display: 'flex', alignItems: 'center' },
   checkbox: { width: '22px', height: '22px', cursor: 'pointer' },
   actions: { marginTop: '20px', display: 'flex', justifyContent: 'space-between' },

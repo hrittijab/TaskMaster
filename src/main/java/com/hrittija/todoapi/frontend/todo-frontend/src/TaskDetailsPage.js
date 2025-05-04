@@ -5,31 +5,55 @@ function TaskDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [notes, setNotes] = useState('');
+  const [backgroundChoice, setBackgroundChoice] = useState('default.jpg'); // ⭐ added
 
   useEffect(() => {
-    const fetchTaskNotes = async () => {
+    const fetchTaskAndBackground = async () => {
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) {
+        navigate('/login');
+        return;
+      }
+
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/${id}`);
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch task notes
+        const taskResponse = await fetch(`http://localhost:8080/api/todos/${id}`);
+        if (taskResponse.ok) {
+          const data = await taskResponse.json();
           setNotes(data.notes || 'No notes available.');
         } else {
           console.error('Failed to fetch notes');
         }
+
+        // Fetch user background
+        const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          const background = userData.backgroundChoice || 'default.jpg';
+          setBackgroundChoice(background);
+          localStorage.setItem('backgroundChoice', background);
+        }
       } catch (error) {
-        console.error('Error fetching notes:', error);
+        console.error('Error fetching task or background:', error);
       }
     };
 
-    fetchTaskNotes();
-  }, [id]);
+    fetchTaskAndBackground();
+  }, [id, navigate]);
 
   const handleBack = () => {
     navigate('/view-tasks');
   };
 
   return (
-    <div style={styles.page}>
+    <div style={{
+      textAlign: 'center',
+      padding: '30px',
+      backgroundImage: `url(/backgrounds/${backgroundChoice})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      minHeight: '100vh',
+    }}>
       <h2>📝 Task Notes</h2>
       <div style={styles.taskBox}>
         <div style={styles.notesBox}>
@@ -42,12 +66,6 @@ function TaskDetailsPage() {
 }
 
 const styles = {
-  page: {
-    textAlign: 'center',
-    padding: '30px',
-    backgroundColor: '#f4f6f8',
-    minHeight: '100vh',
-  },
   taskBox: {
     backgroundColor: 'white',
     padding: '30px',

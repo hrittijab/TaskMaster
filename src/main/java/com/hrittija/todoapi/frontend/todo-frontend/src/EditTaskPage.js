@@ -10,24 +10,41 @@ function EditTaskPage() {
     notes: '',
     completed: false,
   });
+  const [backgroundChoice, setBackgroundChoice] = useState('default.jpg'); // ⭐ added
 
   useEffect(() => {
-    const fetchTask = async () => {
+    const fetchTaskAndBackground = async () => {
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) {
+        navigate('/login');
+        return;
+      }
+
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/${id}`);
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch task
+        const taskResponse = await fetch(`http://localhost:8080/api/todos/${id}`);
+        if (taskResponse.ok) {
+          const data = await taskResponse.json();
           setTask(data);
         } else {
           console.error('Failed to fetch task');
         }
+
+        // Fetch user background
+        const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          const background = userData.backgroundChoice || 'default.jpg';
+          setBackgroundChoice(background);
+          localStorage.setItem('backgroundChoice', background);
+        }
       } catch (error) {
-        console.error('Error fetching task:', error);
+        console.error('Error fetching task or background:', error);
       }
     };
 
-    fetchTask();
-  }, [id]);
+    fetchTaskAndBackground();
+  }, [id, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,7 +79,16 @@ function EditTaskPage() {
   };
 
   return (
-    <div style={styles.page}>
+    <div style={{
+      minHeight: '100vh',
+      backgroundImage: `url(/backgrounds/${backgroundChoice})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '20px',
+    }}>
       <div style={styles.card}>
         <h2 style={styles.title}>Edit Task</h2>
         <form onSubmit={handleSubmit} style={styles.form}>
@@ -99,14 +125,6 @@ function EditTaskPage() {
 }
 
 const styles = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: '#f4f6f8',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '20px',
-  },
   card: {
     backgroundColor: 'white',
     padding: '40px 30px',

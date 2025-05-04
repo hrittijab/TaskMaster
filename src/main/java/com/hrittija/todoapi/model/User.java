@@ -12,4 +12,6 @@ public class User {
     private String firstName;
     private String lastName;
     private String passwordHash; // We'll store hashed password
+    private String backgroundChoice;
+
 }
