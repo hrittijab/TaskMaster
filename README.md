@@ -1,77 +1,39 @@
-<<<<<<< HEAD
-# todo-app
+📝 To-Do App (AWS DynamoDB + Spring Boot + React)
+Welcome to the Personalized To-Do Application!
+This project allows users to create, manage, and view their tasks — while also personalizing the background across all pages for a customized user experience.
 
-This project contains a Maven application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
-=======
-<<<<<<< HEAD
-# todo-app
-=======
-# App
+Built with:
 
-This project contains a maven application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
->>>>>>> ccec6bd (DB testing)
+🌍 Frontend: React.js
 
-## Prerequisites
-- Java 1.8+
-- Apache Maven
-- GraalVM Native Image (optional)
+🚀 Backend: Spring Boot (Java)
 
-## Development
+☁️ Database: AWS DynamoDB
 
-Below is the structure of the generated project.
+🔐 Authentication: Custom login/signup with BCrypt password hashing
 
-<<<<<<< HEAD
-├── src │   ├── main │   │   ├── java │   │   │   └── package │   │   │   ├── App.java │   │   │   ├── DependencyFactory.java │   │   │   └── Handler.java │   │   └── resources │   │   └── simplelogger.properties │   └── test │   └── java │   └── package │   └── HandlerTest.java
+📸 Features
+User Registration and Login: Secure authentication system.
 
-markdown
-Copy
-Edit
+Add New Tasks: Task description, due date, and optional notes.
 
+Edit Existing Tasks: Update task details.
 
+View Tasks: See all tasks, filter by completed, overdue, etc.
 
-- `App.java`: main entry of the application  
-- `DependencyFactory.java`: creates the SDK client  
-- `Handler.java`: you can invoke the API calls using the SDK client here.
+Task Notifications: Overdue task alerts.
 
-### Building the project
-```bash
-mvn clean package
+Delete Tasks: Remove tasks if no longer needed.
 
+Notes Section: Write additional notes for each task.
 
+Background Personalization:
 
----
+Choose from multiple stunning background themes.
 
-### ✅ Then Run:
-After saving the fixed file:
+Background choice is saved permanently in DynamoDB.
 
-```bash
-git add README.md
-git rebase --continue
-=======
-```
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── package
-│   │   │       ├── App.java
-│   │   │       ├── DependencyFactory.java
-│   │   │       └── Handler.java
-│   │   └── resources
-│   │       └── simplelogger.properties
-│   └── test
-│       └── java
-│           └── package
-│               └── HandlerTest.java
-```
+Background persists across login sessions, devices, and pages.
 
-- `App.java`: main entry of the application
-- `DependencyFactory.java`: creates the SDK client
-- `Handler.java`: you can invoke the api calls using the SDK client here.
+Mobile Responsive: Smooth experience across devices.
 
-#### Building the project
-```
-mvn clean package
-```
-
->>>>>>> d5fe286 (DB testing)
->>>>>>> ccec6bd (DB testing)
