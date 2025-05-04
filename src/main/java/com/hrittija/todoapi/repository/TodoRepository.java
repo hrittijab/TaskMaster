@@ -26,6 +26,7 @@ public class TodoRepository {
     private static final String TASK_DESCRIPTION = "taskDescription";
     private static final String COMPLETED = "completed";
     private static final String USER_EMAIL = "userEmail";
+    private static final String DUE_DATE = "dueDate"; // ✅ New constant for dueDate
 
     public TodoRepository(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
@@ -37,6 +38,10 @@ public class TodoRepository {
         item.put(TASK_DESCRIPTION, AttributeValue.builder().s(todo.getTaskDescription()).build());
         item.put(COMPLETED, AttributeValue.builder().bool(todo.isCompleted()).build());
         item.put(USER_EMAIL, AttributeValue.builder().s(todo.getUserEmail()).build());
+
+        if (todo.getDueDate() != null) { // ✅ Save dueDate if available
+            item.put(DUE_DATE, AttributeValue.builder().s(todo.getDueDate()).build());
+        }
 
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
@@ -70,7 +75,7 @@ public class TodoRepository {
 
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(tableName)
-                .indexName("UserEmailIndex") // <-- use your GSI name if needed
+                .indexName("UserEmailIndex") // <-- Your GSI name if needed
                 .keyConditionExpression(USER_EMAIL + " = :emailVal")
                 .expressionAttributeValues(expressionValues)
                 .build();
@@ -101,6 +106,11 @@ public class TodoRepository {
         todo.setTaskDescription(item.get(TASK_DESCRIPTION).s());
         todo.setCompleted(item.get(COMPLETED).bool());
         todo.setUserEmail(item.get(USER_EMAIL).s());
+
+        if (item.containsKey(DUE_DATE)) { // ✅ Load dueDate if present
+            todo.setDueDate(item.get(DUE_DATE).s());
+        }
+
         return todo;
     }
 }

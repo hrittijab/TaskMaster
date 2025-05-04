@@ -5,15 +5,17 @@ public class Todo {
     private String taskDescription;
     private boolean completed;
     private String userEmail;
+    private String dueDate; // ✅ NEW FIELD
 
     // Constructors
     public Todo() {}
 
-    public Todo(String taskId, String taskDescription, boolean completed, String userEmail) {
+    public Todo(String taskId, String taskDescription, boolean completed, String userEmail, String dueDate) {
         this.taskId = taskId;
         this.taskDescription = taskDescription;
         this.completed = completed;
         this.userEmail = userEmail;
+        this.dueDate = dueDate;
     }
 
     // Getters and Setters
@@ -34,7 +36,7 @@ public class Todo {
         this.taskDescription = taskDescription;
     }
 
-    public boolean isCompleted() {         // <-- IMPORTANT: ADD THIS
+    public boolean isCompleted() {
         return completed;
     }
 
@@ -48,5 +50,13 @@ public class Todo {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getDueDate() { // ✅ NEW
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) { // ✅ NEW
+        this.dueDate = dueDate;
     }
 }

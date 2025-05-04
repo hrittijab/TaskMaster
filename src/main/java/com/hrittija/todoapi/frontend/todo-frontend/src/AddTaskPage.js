@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 function AddTaskPage() {
   const [taskDescription, setTaskDescription] = useState('');
+  const [dueDate, setDueDate] = useState(''); // ✅ New state for due date
   const [taskAdded, setTaskAdded] = useState(false);
   const [firstName, setFirstName] = useState('');
   const navigate = useNavigate();
@@ -23,7 +24,10 @@ function AddTaskPage() {
 
   const handleAddTask = async (e) => {
     e.preventDefault();
-    if (!taskDescription.trim()) return;
+    if (!taskDescription.trim() || !dueDate) {
+      alert('Please enter both task description and due date.');
+      return;
+    }
 
     const userEmail = localStorage.getItem('userEmail');
 
@@ -31,11 +35,12 @@ function AddTaskPage() {
       const response = await fetch('http://localhost:8080/api/todos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taskDescription, userEmail }),
+        body: JSON.stringify({ taskDescription, userEmail, dueDate }), // ✅ send dueDate also
       });
 
       if (response.ok) {
         setTaskDescription('');
+        setDueDate('');
         setTaskAdded(true);
       } else {
         alert('Failed to add task.');
@@ -68,15 +73,22 @@ function AddTaskPage() {
               onChange={(e) => setTaskDescription(e.target.value)}
               required
               style={styles.input}
-            /><br/>
-            <button type="submit" style={styles.addButton}>Add Task</button><br/>
-            <button type="button" onClick={handleViewTasks} style={styles.viewButton}>View Tasks</button><br/>
+            /><br />
+            <input
+              type="date" // ✅ this shows a calendar
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              required
+              style={styles.input}
+            /><br />
+            <button type="submit" style={styles.addButton}>Add Task</button><br />
+            <button type="button" onClick={handleViewTasks} style={styles.viewButton}>View Tasks</button><br />
             <button type="button" onClick={handleLogout} style={styles.logoutButton}>Logout</button>
           </form>
         ) : (
           <>
             <h4 style={styles.success}>Task added successfully!</h4>
-            <button onClick={handleViewTasks} style={styles.viewButton}>View Tasks</button><br/>
+            <button onClick={handleViewTasks} style={styles.viewButton}>View Tasks</button><br />
             <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
           </>
         )}

@@ -11,14 +11,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    // Signup endpoint
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody User user) {
         boolean success = userService.registerUser(user);
@@ -29,7 +27,6 @@ public class UserController {
         }
     }
 
-    // Login endpoint
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest) {
         try {
@@ -51,13 +48,13 @@ public class UserController {
         }
     }
 
-    // ⭐ Get User by Email endpoint
+    // ⭐ ADD THIS NEW GET ENDPOINT
     @GetMapping("/getUser")
     public ResponseEntity<?> getUser(@RequestParam String email) {
         try {
             User user = userService.getUserByEmail(email);
             if (user != null) {
-                return ResponseEntity.ok(user); // returns full User object (JSON with firstName, lastName, etc.)
+                return ResponseEntity.ok(user); // returning full user JSON (including firstName)
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
