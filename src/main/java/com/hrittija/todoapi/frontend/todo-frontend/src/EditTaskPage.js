@@ -4,7 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 function EditTaskPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [task, setTask] = useState({ taskDescription: '', completed: false });
+  const [task, setTask] = useState({
+    taskDescription: '',
+    dueDate: '',
+    notes: '',
+    completed: false,
+  });
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -43,7 +48,7 @@ function EditTaskPage() {
         body: JSON.stringify(task),
       });
       if (response.ok) {
-        navigate('/view-tasks'); // Go back to view page
+        navigate('/view-tasks');
       } else {
         console.error('Failed to update task');
       }
@@ -58,57 +63,105 @@ function EditTaskPage() {
 
   return (
     <div style={styles.page}>
-      <h2>Edit Task</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="text"
-          name="taskDescription"
-          value={task.taskDescription}
-          onChange={handleInputChange}
-          style={styles.input}
-          placeholder="Task Description"
-          required
-        />
-        <button type="submit" style={styles.saveButton}>Save Changes</button>
-      </form>
-      <button onClick={handleBack} style={styles.backButton}>Back</button>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Edit Task</h2>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input
+            type="text"
+            name="taskDescription"
+            value={task.taskDescription}
+            onChange={handleInputChange}
+            placeholder="Task Description"
+            style={styles.input}
+            required
+          />
+          <input
+            type="date"
+            name="dueDate"
+            value={task.dueDate}
+            onChange={handleInputChange}
+            style={styles.input}
+          />
+          <textarea
+            name="notes"
+            value={task.notes}
+            onChange={handleInputChange}
+            placeholder="Notes about the task..."
+            rows="4"
+            style={styles.textarea}
+          />
+          <button type="submit" style={styles.saveButton}>Save Changes</button>
+          <button type="button" onClick={handleBack} style={styles.backButton}>Back</button>
+        </form>
+      </div>
     </div>
   );
 }
 
 const styles = {
   page: {
-    textAlign: 'center',
-    marginTop: '50px',
+    minHeight: '100vh',
+    backgroundColor: '#f4f6f8',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
+  },
+  card: {
+    backgroundColor: 'white',
+    padding: '40px 30px',
+    borderRadius: '12px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    maxWidth: '400px',
+  },
+  title: {
+    marginBottom: '20px',
+    color: '#333',
+    fontSize: '24px',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    gap: '20px',
-    marginTop: '30px',
+    gap: '15px',
   },
   input: {
-    width: '300px',
-    padding: '10px',
+    padding: '12px',
     fontSize: '16px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    outline: 'none',
+    transition: 'border-color 0.3s',
+  },
+  textarea: {
+    padding: '12px',
+    fontSize: '16px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    outline: 'none',
+    resize: 'none',
+    height: '120px',
+    transition: 'border-color 0.3s',
   },
   saveButton: {
     backgroundColor: '#1976d2',
     color: 'white',
-    padding: '10px 20px',
-    borderRadius: '8px',
+    padding: '12px',
     border: 'none',
+    borderRadius: '8px',
+    fontSize: '16px',
     cursor: 'pointer',
+    transition: 'background-color 0.3s',
   },
   backButton: {
-    marginTop: '20px',
     backgroundColor: '#888',
     color: 'white',
-    padding: '10px 20px',
-    borderRadius: '8px',
+    padding: '12px',
     border: 'none',
+    borderRadius: '8px',
+    fontSize: '16px',
     cursor: 'pointer',
+    transition: 'background-color 0.3s',
   },
 };
 

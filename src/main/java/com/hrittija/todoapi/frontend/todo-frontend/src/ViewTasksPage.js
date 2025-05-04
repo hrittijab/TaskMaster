@@ -54,6 +54,8 @@ function ViewTasksPage() {
 
   const handleEdit = (taskId) => navigate(`/edit-task/${taskId}`);
 
+  const handleDetail = (taskId) => navigate(`/task-details/${taskId}`); // NEW
+
   const handleToggleComplete = async (taskId, currentStatus) => {
     try {
       const response = await fetch(`http://localhost:8080/api/todos/${taskId}/complete`, {
@@ -111,7 +113,6 @@ function ViewTasksPage() {
     return '#fffbe6';
   };
 
-  // Progress Calculation
   const completedTasks = tasks.filter(task => task.completed).length;
   const totalTasks = tasks.length;
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
@@ -218,6 +219,7 @@ function ViewTasksPage() {
                 </div>
               </div>
               <div style={styles.actions}>
+                <button style={styles.detailButton} onClick={() => handleDetail(task.taskId)}>Details 📄</button>
                 <button style={styles.editButton} onClick={() => handleEdit(task.taskId)}>Edit ✏️</button>
                 <button style={styles.deleteButton} onClick={() => handleDelete(task.taskId)}>Delete 🗑️</button>
               </div>
@@ -255,6 +257,7 @@ const styles = {
   topRow: { display: 'flex', alignItems: 'center' },
   checkbox: { width: '22px', height: '22px', cursor: 'pointer' },
   actions: { marginTop: '20px', display: 'flex', justifyContent: 'space-between' },
+  detailButton: { backgroundColor: '#17a2b8', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
   editButton: { backgroundColor: '#1976d2', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
   deleteButton: { backgroundColor: '#d32f2f', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
   backButton: { marginTop: '40px', backgroundColor: '#4caf50', border: 'none', color: 'white', padding: '12px 24px', borderRadius: '8px', fontSize: '18px', cursor: 'pointer' },

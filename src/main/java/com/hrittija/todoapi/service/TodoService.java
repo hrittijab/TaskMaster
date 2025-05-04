@@ -26,7 +26,8 @@ public class TodoService {
         todo.setTaskId(taskId);
         todo.setCompleted(false);
 
-        todoRepository.save(todo); // ✅ Pass the Todo object only
+        // Save notes (if available) along with task
+        todoRepository.save(todo);
         return todo;
     }
 
@@ -40,16 +41,22 @@ public class TodoService {
         return todoRepository.findByUserEmail(userEmail);
     }
 
-    // 🚀 Update todo
     public boolean updateTodo(String taskId, Todo updatedTodo) {
         Todo existing = todoRepository.findById(taskId);
         if (existing != null) {
-            updatedTodo.setTaskId(taskId); // Keep same ID
-            todoRepository.save(updatedTodo); // ✅ Save updated Todo
+            existing.setTaskDescription(updatedTodo.getTaskDescription() != null ? updatedTodo.getTaskDescription() : existing.getTaskDescription());
+            existing.setDueDate(updatedTodo.getDueDate() != null ? updatedTodo.getDueDate() : existing.getDueDate());
+            existing.setNotes(updatedTodo.getNotes() != null ? updatedTodo.getNotes() : existing.getNotes());
+    
+            // Important: Allow updating completed status too if needed
+            existing.setCompleted(updatedTodo.isCompleted());
+    
+            todoRepository.save(existing);
             return true;
         }
         return false;
     }
+    
 
     // 🚀 Delete todo
     public boolean deleteTodo(String taskId) {
@@ -66,7 +73,7 @@ public class TodoService {
         Todo todo = todoRepository.findById(taskId);
         if (todo != null) {
             todo.setCompleted(completed);
-            todoRepository.save(todo); // ✅ Save updated Todo with new completed status
+            todoRepository.save(todo); 
             return true;
         }
         return false;

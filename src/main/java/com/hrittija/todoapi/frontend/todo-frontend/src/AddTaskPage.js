@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 function AddTaskPage() {
   const [taskDescription, setTaskDescription] = useState('');
-  const [dueDate, setDueDate] = useState(''); // ✅ New state for due date
+  const [dueDate, setDueDate] = useState('');
+  const [notes, setNotes] = useState(''); // ✅ NEW
   const [taskAdded, setTaskAdded] = useState(false);
   const [firstName, setFirstName] = useState('');
   const navigate = useNavigate();
@@ -35,12 +36,13 @@ function AddTaskPage() {
       const response = await fetch('http://localhost:8080/api/todos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taskDescription, userEmail, dueDate }), // ✅ send dueDate also
+        body: JSON.stringify({ taskDescription, userEmail, dueDate, notes }), // ✅ send notes
       });
 
       if (response.ok) {
         setTaskDescription('');
         setDueDate('');
+        setNotes(''); // ✅ reset notes too
         setTaskAdded(true);
       } else {
         alert('Failed to add task.');
@@ -75,11 +77,18 @@ function AddTaskPage() {
               style={styles.input}
             /><br />
             <input
-              type="date" // ✅ this shows a calendar
+              type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               required
               style={styles.input}
+            /><br />
+            <textarea
+              placeholder="Add notes for the task (optional)"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows="4"
+              style={{ ...styles.input, height: '100px', resize: 'none' }}
             /><br />
             <button type="submit" style={styles.addButton}>Add Task</button><br />
             <button type="button" onClick={handleViewTasks} style={styles.viewButton}>View Tasks</button><br />

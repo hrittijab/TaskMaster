@@ -5,6 +5,7 @@ import SignupPage from './SignupPage';
 import AddTaskPage from './AddTaskPage';
 import ViewTasksPage from './ViewTasksPage';
 import EditTaskPage from './EditTaskPage';
+import TaskDetailsPage from './TaskDetailsPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/add-task" element={<AddTaskPage />} />
         <Route path="/view-tasks" element={<ViewTasksPage />} />
         <Route path="/edit-task/:id" element={<EditTaskPage />} />
+        <Route path="/task-details/:id" element={<TaskDetailsPage />} />
       </Routes>
     </Router>
   );

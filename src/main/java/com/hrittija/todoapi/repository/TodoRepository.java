@@ -26,7 +26,8 @@ public class TodoRepository {
     private static final String TASK_DESCRIPTION = "taskDescription";
     private static final String COMPLETED = "completed";
     private static final String USER_EMAIL = "userEmail";
-    private static final String DUE_DATE = "dueDate"; // ✅ New constant for dueDate
+    private static final String DUE_DATE = "dueDate";
+    private static final String NOTES = "notes"; // ✅ NEW for notes
 
     public TodoRepository(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
@@ -41,6 +42,10 @@ public class TodoRepository {
 
         if (todo.getDueDate() != null) { // ✅ Save dueDate if available
             item.put(DUE_DATE, AttributeValue.builder().s(todo.getDueDate()).build());
+        }
+
+        if (todo.getNotes() != null) { // ✅ Save notes if available
+            item.put(NOTES, AttributeValue.builder().s(todo.getNotes()).build());
         }
 
         PutItemRequest request = PutItemRequest.builder()
@@ -109,6 +114,10 @@ public class TodoRepository {
 
         if (item.containsKey(DUE_DATE)) { // ✅ Load dueDate if present
             todo.setDueDate(item.get(DUE_DATE).s());
+        }
+
+        if (item.containsKey(NOTES)) { // ✅ Load notes if present
+            todo.setNotes(item.get(NOTES).s());
         }
 
         return todo;
