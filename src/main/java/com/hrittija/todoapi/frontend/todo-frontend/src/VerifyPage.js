@@ -1,75 +1,70 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-function LoginPage() {
+function VerifyPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/api/users/login', {
+      const response = await fetch('http://localhost:8080/api/users/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email.toLowerCase(), password }),  // ⭐ normalize email
+        body: JSON.stringify({ email, code }),
       });
 
       if (response.ok) {
-        localStorage.setItem('userEmail', email.toLowerCase()); // ⭐ save lowercase
-        navigate('/add-task');
+        alert('Email verified successfully! You can now log in.');
+        navigate('/login');
       } else {
         const errorMessage = await response.text();
-        
-        if (response.status === 403) {
-          alert('Please verify your email before logging in.');
-          navigate('/verify');
-        } else {
-          alert(errorMessage || 'Login failed. Please try again or signup.');
-        }
+        alert(errorMessage || 'Verification failed. Please try again.');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Verification error:', error);
     }
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.formBox}>
-        <h2 style={styles.title}>Login</h2>
-        <form onSubmit={handleLogin}>
+        <h2 style={styles.title}>Verify Your Email</h2>
+        <form onSubmit={handleVerify}>
           <input
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value.trim())} // ⭐ also trim spaces
+            onChange={(e) => setEmail(e.target.value)}
             required
             style={styles.input}
           /><br/>
           <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="text"
+            placeholder="6-digit Verification Code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
             required
             style={styles.input}
+            maxLength="6"
           /><br/>
           <button
             type="submit"
-            style={styles.loginButton}
+            style={styles.verifyButton}
             onMouseOver={(e) => e.target.style.backgroundColor = '#004494'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#0056b3'}
           >
-            Login
+            Verify Email
           </button>
         </form>
-        <p style={styles.signupText}>
-          Don't have an account?{' '}
-          <Link to="/signup" style={styles.link}>
-            Signup here
+        <p style={styles.loginText}>
+          Already verified?{' '}
+          <Link to="/login" style={styles.link}>
+            Login here
           </Link>
         </p>
       </div>
@@ -110,7 +105,7 @@ const styles = {
     marginBottom: '20px',
     fontSize: '16px',
   },
-  loginButton: {
+  verifyButton: {
     width: '100%',
     padding: '12px',
     marginTop: '10px',
@@ -123,7 +118,7 @@ const styles = {
     cursor: 'pointer',
     transition: 'background-color 0.3s',
   },
-  signupText: {
+  loginText: {
     marginTop: '20px',
     color: '#555',
     fontSize: '14px',
@@ -135,4 +130,4 @@ const styles = {
   },
 };
 
-export default LoginPage;
+export default VerifyPage;

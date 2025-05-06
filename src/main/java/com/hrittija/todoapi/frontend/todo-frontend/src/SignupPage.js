@@ -37,11 +37,16 @@ function SignUpPage() {
       const response = await fetch('http://localhost:8080/api/users/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, firstName, lastName, passwordHash: password }),
+        body: JSON.stringify({
+          email: email.toLowerCase(), // ⭐ normalize email
+          firstName,
+          lastName,
+          passwordHash: password,
+        }),
       });
 
       if (response.ok) {
-        alert('Signup successful!');
+        alert('Signup successful! Please verify your email.');
         navigate('/login');
       } else {
         alert('Signup failed.');
@@ -79,7 +84,7 @@ function SignUpPage() {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value.trim())} // ⭐ trim spaces too
           required
           style={styles.input}
         />
@@ -92,7 +97,7 @@ function SignUpPage() {
           style={styles.input}
         />
 
-        {/* Password Strength Bar */}
+        {/* Password strength bar same */}
         <div style={{ marginBottom: '15px' }}>
           <div style={{
             height: '8px',
@@ -123,17 +128,14 @@ function SignUpPage() {
 
         <button type="submit" style={styles.signupButton}>Sign Up</button>
 
-        {/* ✨ New Login Button */}
         <p style={{ marginTop: '20px' }}>
           Already have an account?{' '}
           <button onClick={goToLogin} style={styles.loginLink}>Log In</button>
         </p>
-
       </form>
     </div>
   );
 }
-
 const styles = {
   container: {
     minHeight: '100vh',
