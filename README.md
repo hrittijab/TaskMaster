@@ -1,39 +1,37 @@
-📝 To-Do App (AWS DynamoDB + Spring Boot + React)
-Welcome to the Personalized To-Do Application!
-This project allows users to create, manage, and view their tasks — while also personalizing the background across all pages for a customized user experience.
+📋 Todo App with AWS DynamoDB, Email Verification, and Spring Boot Backend
+Welcome to my Todo App!
+This full-stack application allows users to sign up, verify their email, log in, and manage their tasks — all built with Spring Boot, AWS DynamoDB, and React.
 
-Built with:
+Features
+✅ User Registration with email + password
 
-🌍 Frontend: React.js
+✅ Email Verification (via SMTP)
 
-🚀 Backend: Spring Boot (Java)
+✅ Login Authentication (only verified users can log in)
 
-☁️ Database: AWS DynamoDB
+✅ Add Tasks, View Tasks, Edit Tasks, Delete Tasks
 
-🔐 Authentication: Custom login/signup with BCrypt password hashing
+✅ Pick Custom Backgrounds for a personalized experience
 
-📸 Features
-User Registration and Login: Secure authentication system.
+✅ AWS DynamoDB is used for fast, serverless database storage
 
-Add New Tasks: Task description, due date, and optional notes.
+✅ Secure Passwords using BCrypt hashing
 
-Edit Existing Tasks: Update task details.
+✅ Spring Boot REST API for backend
 
-View Tasks: See all tasks, filter by completed, overdue, etc.
+✅ React for a beautiful frontend
 
-Task Notifications: Overdue task alerts.
+✅ Environment Protection (App secrets hidden, .gitignore clean)
 
-Delete Tasks: Remove tasks if no longer needed.
+🛠 Technologies Used
+Backend	Frontend	Cloud
+Spring Boot	React.js	AWS DynamoDB
+Java, HTML/CSS, AWS IAM (for secure access)
+Maven		SMTP (Gmail App Password)
 
-Notes Section: Write additional notes for each task.
+Security
+Passwords are never stored in plain text — always hashed with BCrypt.
 
-Background Personalization:
+App Secrets (SMTP passwords, AWS credentials) are moved to application-secret.properties and NOT pushed to GitHub.
 
-Choose from multiple stunning background themes.
-
-Background choice is saved permanently in DynamoDB.
-
-Background persists across login sessions, devices, and pages.
-
-Mobile Responsive: Smooth experience across devices.
-
+Environment variables can be used for production deployments.
