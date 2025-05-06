@@ -1,5 +1,5 @@
-📋 Todo App with AWS DynamoDB, Email Verification, and Spring Boot Backend
-Welcome to my Todo App!
+📋 TaskMaster with AWS DynamoDB, Email Verification, and Spring Boot Backend
+Welcome to the TaskMaster App!
 This full-stack application allows users to sign up, verify their email, log in, and manage their tasks — all built with Spring Boot, AWS DynamoDB, and React.
 
 Features

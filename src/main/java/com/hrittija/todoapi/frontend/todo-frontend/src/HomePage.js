@@ -4,7 +4,7 @@ function HomePage() {
   return (
     <div style={styles.container}>
       <div style={styles.heroBox}>
-        <h1 style={styles.title}>Welcome to Your To-Do World 🌟</h1>
+        <h1 style={styles.title}>Welcome to the TaskMaster World 🌟</h1>
         <p style={styles.subtitle}>Organize your tasks, boost your productivity, and conquer your day!</p>
 
         <div style={styles.buttonContainer}>
