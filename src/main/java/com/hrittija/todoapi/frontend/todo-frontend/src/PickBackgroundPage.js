@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Add toast import
 
 function PickBackgroundPage() {
   const [backgrounds] = useState([
@@ -21,7 +22,7 @@ function PickBackgroundPage() {
   const handleBackgroundSelect = async (backgroundUrl) => {
     const userEmail = localStorage.getItem('userEmail');
     if (!userEmail) {
-      alert('User not logged in.');
+      toast.error('User not logged in.'); // 🎯 Toast instead of alert
       navigate('/login');
       return;
     }
@@ -34,15 +35,17 @@ function PickBackgroundPage() {
       });
 
       if (response.ok) {
-        alert('Background updated!');
+        toast.success('Background updated!'); // 🎉 Toast instead of alert
         localStorage.setItem('backgroundChoice', backgroundUrl);
         setSelectedBackground(backgroundUrl);
-        navigate('/add-task'); // Go back to Add Task after selecting
+        setTimeout(() => navigate('/add-task'), 2000); // 🎯 delay before navigating
       } else {
         console.error('Failed to save background');
+        toast.error('Failed to save background.');
       }
     } catch (error) {
       console.error('Error updating background:', error);
+      toast.error('Error updating background.');
     }
   };
 

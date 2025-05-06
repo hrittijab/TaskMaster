@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Import toast
 
 function TaskDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [notes, setNotes] = useState('');
-  const [backgroundChoice, setBackgroundChoice] = useState('default.jpg'); // ⭐ added
+  const [backgroundChoice, setBackgroundChoice] = useState('default.jpg');
 
   useEffect(() => {
     const fetchTaskAndBackground = async () => {
       const userEmail = localStorage.getItem('userEmail');
       if (!userEmail) {
+        toast.error('User not logged in.'); // ❗ Toast if user not found
         navigate('/login');
         return;
       }
@@ -23,6 +25,7 @@ function TaskDetailsPage() {
           setNotes(data.notes || 'No notes available.');
         } else {
           console.error('Failed to fetch notes');
+          toast.error('Failed to fetch task notes.');
         }
 
         // Fetch user background
@@ -32,9 +35,13 @@ function TaskDetailsPage() {
           const background = userData.backgroundChoice || 'default.jpg';
           setBackgroundChoice(background);
           localStorage.setItem('backgroundChoice', background);
+        } else {
+          console.error('Failed to fetch background choice');
+          toast.error('Failed to fetch background settings.');
         }
       } catch (error) {
         console.error('Error fetching task or background:', error);
+        toast.error('An unexpected error occurred.');
       }
     };
 

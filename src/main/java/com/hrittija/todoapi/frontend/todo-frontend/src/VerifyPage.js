@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Add toast import
 
 function VerifyPage() {
   const [email, setEmail] = useState('');
@@ -18,15 +19,17 @@ function VerifyPage() {
         body: JSON.stringify({ email, code }),
       });
 
+      const result = await response.text(); // ⭐ Read backend message
+
       if (response.ok) {
-        alert('Email verified successfully! You can now log in.');
-        navigate('/login');
+        toast.success('Email verified successfully! You can now log in.'); // 🎉 Toast
+        setTimeout(() => navigate('/login'), 2000); // ⏳ Delay before navigation
       } else {
-        const errorMessage = await response.text();
-        alert(errorMessage || 'Verification failed. Please try again.');
+        toast.error(result || 'Verification failed. Please try again.'); // ❗ Error Toast
       }
     } catch (error) {
       console.error('Verification error:', error);
+      toast.error('An unexpected error occurred. Please try again.');
     }
   };
 

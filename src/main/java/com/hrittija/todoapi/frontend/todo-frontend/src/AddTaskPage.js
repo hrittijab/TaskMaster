@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Add toast import
 
 function AddTaskPage() {
   const [taskDescription, setTaskDescription] = useState('');
@@ -13,6 +14,7 @@ function AddTaskPage() {
   useEffect(() => {
     const userEmail = localStorage.getItem('userEmail');
     if (!userEmail) {
+      toast.error('User not logged in.');
       navigate('/login');
     } else {
       fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`)
@@ -24,14 +26,17 @@ function AddTaskPage() {
             localStorage.setItem('backgroundChoice', data.backgroundChoice);
           }
         })
-        .catch((err) => console.error('Failed to fetch user info:', err));
+        .catch((err) => {
+          console.error('Failed to fetch user info:', err);
+          toast.error('Failed to fetch user info.');
+        });
     }
   }, [navigate]);
 
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!taskDescription.trim() || !dueDate) {
-      alert('Please enter both task description and due date.');
+      toast.warning('Please enter both task description and due date.');
       return;
     }
 
@@ -49,16 +54,20 @@ function AddTaskPage() {
         setDueDate('');
         setNotes('');
         setTaskAdded(true);
+        toast.success('Task added successfully!');
       } else {
-        alert('Failed to add task.');
+        console.error('Failed to add task');
+        toast.error('Failed to add task.');
       }
     } catch (error) {
       console.error('Error adding task:', error);
+      toast.error('An unexpected error occurred.');
     }
   };
 
   const handleLogout = () => {
     localStorage.clear();
+    toast.success('Logged out successfully.');
     navigate('/login');
   };
 
@@ -67,7 +76,7 @@ function AddTaskPage() {
   };
 
   const handlePickBackground = () => {
-    navigate('/pick-background'); // Navigate to the new background picker page
+    navigate('/pick-background');
   };
 
   return (

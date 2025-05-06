@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ import toast
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,24 +16,26 @@ function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email.toLowerCase(), password }),  // ⭐ normalize email
+        body: JSON.stringify({ email: email.toLowerCase(), password }),
       });
 
+      const result = await response.text(); // ⭐ get the backend response text
+
       if (response.ok) {
-        localStorage.setItem('userEmail', email.toLowerCase()); // ⭐ save lowercase
-        navigate('/add-task');
+        localStorage.setItem('userEmail', email.toLowerCase());
+        toast.success(result); // 🎉 Success toast
+        setTimeout(() => navigate('/add-task'), 2000); // 🎯 small delay before navigating
       } else {
-        const errorMessage = await response.text();
-        
         if (response.status === 403) {
-          alert('Please verify your email before logging in.');
-          navigate('/verify');
+          toast.error('Please verify your email before logging in.');
+          setTimeout(() => navigate('/verify'), 2000); // 🎯 small delay before navigating to verify
         } else {
-          alert(errorMessage || 'Login failed. Please try again or signup.');
+          toast.error(result || 'Login failed. Please try again or signup.');
         }
       }
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Something went wrong. Please try again.');
     }
   };
 
@@ -45,7 +48,7 @@ function LoginPage() {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value.trim())} // ⭐ also trim spaces
+            onChange={(e) => setEmail(e.target.value.trim())}
             required
             style={styles.input}
           /><br/>

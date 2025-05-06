@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Added toast
 
 function EditTaskPage() {
   const { id } = useParams();
@@ -10,12 +11,13 @@ function EditTaskPage() {
     notes: '',
     completed: false,
   });
-  const [backgroundChoice, setBackgroundChoice] = useState('default.jpg'); // ⭐ added
+  const [backgroundChoice, setBackgroundChoice] = useState('default.jpg');
 
   useEffect(() => {
     const fetchTaskAndBackground = async () => {
       const userEmail = localStorage.getItem('userEmail');
       if (!userEmail) {
+        toast.error('User not logged in.');
         navigate('/login');
         return;
       }
@@ -28,6 +30,7 @@ function EditTaskPage() {
           setTask(data);
         } else {
           console.error('Failed to fetch task');
+          toast.error('Failed to fetch task.');
         }
 
         // Fetch user background
@@ -37,9 +40,13 @@ function EditTaskPage() {
           const background = userData.backgroundChoice || 'default.jpg';
           setBackgroundChoice(background);
           localStorage.setItem('backgroundChoice', background);
+        } else {
+          console.error('Failed to fetch user background');
+          toast.error('Failed to fetch user background.');
         }
       } catch (error) {
         console.error('Error fetching task or background:', error);
+        toast.error('An error occurred. Please try again.');
       }
     };
 
@@ -65,12 +72,15 @@ function EditTaskPage() {
         body: JSON.stringify(task),
       });
       if (response.ok) {
+        toast.success('Task updated successfully!');
         navigate('/view-tasks');
       } else {
         console.error('Failed to update task');
+        toast.error('Failed to update task.');
       }
     } catch (error) {
       console.error('Error updating task:', error);
+      toast.error('An error occurred while updating the task.');
     }
   };
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Add toast import
 
 function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -29,7 +30,7 @@ function SignUpPage() {
     e.preventDefault();
 
     if (passwordStrength < 4) {
-      alert("Password not strong enough.");
+      toast.error("Password not strong enough."); // ❗Toast instead of alert
       return;
     }
 
@@ -38,21 +39,24 @@ function SignUpPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email.toLowerCase(), // ⭐ normalize email
+          email: email.toLowerCase(),
           firstName,
           lastName,
           passwordHash: password,
         }),
       });
 
+      const result = await response.text(); // ⭐ Fetch response text
+
       if (response.ok) {
-        alert('Signup successful! Please verify your email.');
-        navigate('/login');
+        toast.success('Signup successful! Please verify your email.'); // 🎉 Toast
+        setTimeout(() => navigate('/login'), 2000); // ⏳ Delay to let user read Toast
       } else {
-        alert('Signup failed.');
+        toast.error(result || 'Signup failed.'); // ❗ Error Toast
       }
     } catch (error) {
       console.error('Signup error:', error);
+      toast.error('Something went wrong. Please try again.');
     }
   };
 
@@ -62,8 +66,9 @@ function SignUpPage() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>Sign Up</h2>
       <form onSubmit={handleSignup} style={styles.form}>
+        <h2 style={styles.heading}>Sign Up</h2>
+        
         <input
           type="text"
           placeholder="First Name"
@@ -84,7 +89,7 @@ function SignUpPage() {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value.trim())} // ⭐ trim spaces too
+          onChange={(e) => setEmail(e.target.value.trim())}
           required
           style={styles.input}
         />
@@ -97,7 +102,6 @@ function SignUpPage() {
           style={styles.input}
         />
 
-        {/* Password strength bar same */}
         <div style={{ marginBottom: '15px' }}>
           <div style={{
             height: '8px',
@@ -128,7 +132,7 @@ function SignUpPage() {
 
         <button type="submit" style={styles.signupButton}>Sign Up</button>
 
-        <p style={{ marginTop: '20px' }}>
+        <p style={{ marginTop: '20px', textAlign: 'center' }}>
           Already have an account?{' '}
           <button onClick={goToLogin} style={styles.loginLink}>Log In</button>
         </p>
@@ -136,6 +140,7 @@ function SignUpPage() {
     </div>
   );
 }
+
 const styles = {
   container: {
     minHeight: '100vh',
@@ -148,6 +153,7 @@ const styles = {
   },
   heading: {
     color: '#003366',
+    textAlign: 'center',
     marginBottom: '20px',
   },
   form: {

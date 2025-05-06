@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // ⭐ Added toast
 
 function ViewTasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -17,10 +18,11 @@ function ViewTasksPage() {
     const fetchUserAndTasks = async () => {
       const userEmail = localStorage.getItem('userEmail');
       if (!userEmail) {
+        toast.error('User not logged in.');
         navigate('/login');
         return;
       }
-  
+
       try {
         // Fetch User
         const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
@@ -31,7 +33,7 @@ function ViewTasksPage() {
             localStorage.setItem('backgroundChoice', userData.backgroundChoice);
           }
         }
-  
+
         // Fetch Tasks
         const tasksResponse = await fetch(`http://localhost:8080/api/todos/user/${encodeURIComponent(userEmail)}`);
         if (tasksResponse.ok) {
@@ -39,19 +41,20 @@ function ViewTasksPage() {
           setTasks(data);
         } else {
           console.error('Failed to fetch tasks');
+          toast.error('Failed to fetch tasks.');
         }
-  
+
         const storedDismissed = JSON.parse(localStorage.getItem('dismissedTasks')) || [];
         setDismissedTaskIds(storedDismissed);
-  
+
       } catch (error) {
         console.error('Error fetching user or tasks:', error);
+        toast.error('An unexpected error occurred.');
       }
     };
-  
+
     fetchUserAndTasks();
   }, [navigate]);
-  
 
   const handleBack = () => navigate('/add-task');
 
@@ -60,11 +63,14 @@ function ViewTasksPage() {
       const response = await fetch(`http://localhost:8080/api/todos/${taskId}`, { method: 'DELETE' });
       if (response.ok) {
         setTasks(prev => prev.filter(task => task.taskId !== taskId));
+        toast.success('Task deleted successfully!');
       } else {
         console.error('Failed to delete task');
+        toast.error('Failed to delete task.');
       }
     } catch (error) {
       console.error('Error deleting task:', error);
+      toast.error('An unexpected error occurred.');
     }
   };
 
@@ -80,11 +86,14 @@ function ViewTasksPage() {
       });
       if (response.ok) {
         setTasks(prev => prev.map(task => (task.taskId === taskId ? { ...task, completed: !currentStatus } : task)));
+        toast.success('Task status updated.');
       } else {
         console.error('Failed to toggle completion');
+        toast.error('Failed to update task status.');
       }
     } catch (error) {
       console.error('Error toggling completion:', error);
+      toast.error('An unexpected error occurred.');
     }
   };
 
