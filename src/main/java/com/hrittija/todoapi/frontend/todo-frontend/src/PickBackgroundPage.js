@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import BASE_URL from './config'; // ⭐ Import BASE_URL
+
 
 function PickBackgroundPage() {
   const [backgrounds] = useState([
