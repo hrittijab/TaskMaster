@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Added toast
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function EditTaskPage() {
   const { id } = useParams();
@@ -23,8 +24,8 @@ function EditTaskPage() {
       }
 
       try {
-        // Fetch task
-        const taskResponse = await fetch(`http://localhost:8080/api/todos/${id}`);
+        // ⭐ Fetch task using BASE_URL
+        const taskResponse = await fetch(`${BASE_URL}/api/todos/${id}`);
         if (taskResponse.ok) {
           const data = await taskResponse.json();
           setTask(data);
@@ -33,8 +34,8 @@ function EditTaskPage() {
           toast.error('Failed to fetch task.');
         }
 
-        // Fetch user background
-        const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
+        // ⭐ Fetch user background using BASE_URL
+        const userResponse = await fetch(`${BASE_URL}/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
         if (userResponse.ok) {
           const userData = await userResponse.json();
           const background = userData.backgroundChoice || 'default.jpg';
@@ -64,7 +65,7 @@ function EditTaskPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/todos/${id}`, { // ⭐ Use BASE_URL
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

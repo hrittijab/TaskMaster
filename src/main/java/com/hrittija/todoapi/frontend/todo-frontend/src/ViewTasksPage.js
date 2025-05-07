@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Added toast
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function ViewTasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -25,7 +26,7 @@ function ViewTasksPage() {
 
       try {
         // Fetch User
-        const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
+        const userResponse = await fetch(`${BASE_URL}/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
         if (userResponse.ok) {
           const userData = await userResponse.json();
           if (userData.backgroundChoice) {
@@ -35,7 +36,7 @@ function ViewTasksPage() {
         }
 
         // Fetch Tasks
-        const tasksResponse = await fetch(`http://localhost:8080/api/todos/user/${encodeURIComponent(userEmail)}`);
+        const tasksResponse = await fetch(`${BASE_URL}/api/todos/user/${encodeURIComponent(userEmail)}`);
         if (tasksResponse.ok) {
           const data = await tasksResponse.json();
           setTasks(data);
@@ -60,7 +61,7 @@ function ViewTasksPage() {
 
   const handleDelete = async (taskId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/todos/${taskId}`, { method: 'DELETE' });
+      const response = await fetch(`${BASE_URL}/api/todos/${taskId}`, { method: 'DELETE' });
       if (response.ok) {
         setTasks(prev => prev.filter(task => task.taskId !== taskId));
         toast.success('Task deleted successfully!');
@@ -79,7 +80,7 @@ function ViewTasksPage() {
 
   const handleToggleComplete = async (taskId, currentStatus) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/todos/${taskId}/complete`, {
+      const response = await fetch(`${BASE_URL}/api/todos/${taskId}/complete`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(!currentStatus),
@@ -151,38 +152,41 @@ function ViewTasksPage() {
       backgroundPosition: 'center',
       textAlign: 'center',
     }}>
-      <div style={styles.topBar}>
-        <h1 style={styles.heading}>📋 Your Tasks</h1>
-        <div style={styles.notificationIcon} onClick={() => setNotificationsOpen(!notificationsOpen)}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '36px', color: '#333' }}>📋 Your Tasks</h1>
+        <div style={{ fontSize: '28px', cursor: 'pointer', position: 'relative' }} onClick={() => setNotificationsOpen(!notificationsOpen)}>
           🔔
           {upcomingTasks.length > 0 && (
-            <span style={styles.notificationBadge}>{upcomingTasks.length}</span>
+            <span style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: 'red', color: 'white', borderRadius: '50%', padding: '2px 6px', fontSize: '12px' }}>
+              {upcomingTasks.length}
+            </span>
           )}
         </div>
       </div>
 
-      <div style={styles.progressBarContainer}>
+      <div style={{ height: '10px', width: '90%', margin: '10px auto', backgroundColor: '#ddd', borderRadius: '10px', overflow: 'hidden' }}>
         <div
           style={{
-            ...styles.progressBarFill,
+            height: '100%',
             width: `${progress}%`,
             backgroundColor: progress >= 70 ? '#4caf50' : progress >= 30 ? '#ffc107' : '#f44336',
+            transition: 'width 0.4s ease-in-out',
           }}
         ></div>
       </div>
-      <p style={styles.progressText}>
+      <p style={{ fontSize: '16px', color: '#555', marginBottom: '20px' }}>
         {completedTasks} of {totalTasks} tasks completed {progress === 100 ? '🎯' : ''}
       </p>
 
       {notificationsOpen && (
-        <div style={styles.notificationPopup}>
+        <div style={{ position: 'absolute', right: '20px', top: '80px', backgroundColor: 'white', boxShadow: '0px 2px 10px rgba(0,0,0,0.2)', padding: '15px', borderRadius: '10px', zIndex: '1000', width: '280px' }}>
           <h4>🔔 Upcoming Tasks</h4>
           {upcomingTasks.length > 0 ? (
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {upcomingTasks.map((task) => (
-                <li key={task.taskId} style={styles.notificationItem}>
+                <li key={task.taskId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <span>{task.taskDescription} (Due: {task.dueDate})</span>
-                  <button onClick={() => dismissNotification(task.taskId)} style={styles.dismissButton}>❌</button>
+                  <button onClick={() => dismissNotification(task.taskId)} style={{ background: 'none', border: 'none', color: 'red', fontSize: '18px', cursor: 'pointer' }}>❌</button>
                 </li>
               ))}
             </ul>
@@ -192,21 +196,21 @@ function ViewTasksPage() {
         </div>
       )}
 
-      <div style={styles.controls}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <input
           type="text"
           placeholder="🔍 Search tasks..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          style={styles.searchBox}
+          style={{ padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '250px' }}
         />
-        <select value={filter} onChange={(e) => setFilter(e.target.value)} style={styles.dropdown}>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)} style={{ padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '180px' }}>
           <option value="all">All Tasks</option>
           <option value="completed">Completed</option>
           <option value="incomplete">Incomplete</option>
           <option value="overdue">Past Due</option>
         </select>
-        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={styles.dropdown}>
+        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '180px' }}>
           <option value="default">Sort By</option>
           <option value="dueDateAsc">Due Date ↑</option>
           <option value="dueDateDesc">Due Date ↓</option>
@@ -214,69 +218,40 @@ function ViewTasksPage() {
       </div>
 
       {tasks.length > 0 ? (
-        <div style={styles.list}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px' }}>
           {tasks.filter(filterTasks).sort(sortTasks).map((task) => (
-            <div key={task.taskId} style={{ ...styles.card, backgroundColor: getCardColor(task) }}>
-              <div style={styles.topRow}>
+            <div key={task.taskId} style={{ width: '320px', padding: '20px', borderRadius: '10px', backgroundColor: getCardColor(task), boxShadow: '0px 4px 12px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input
                   type="checkbox"
                   checked={task.completed}
                   onChange={() => handleToggleComplete(task.taskId, task.completed)}
-                  style={styles.checkbox}
+                  style={{ width: '22px', height: '22px', cursor: 'pointer' }}
                 />
                 <div style={{ flex: 1, marginLeft: '10px' }}>
-                  <span style={{
-                    textDecoration: task.completed ? 'line-through' : 'none',
-                    fontSize: '18px',
-                    fontWeight: '500',
-                    color: task.completed ? '#4CAF50' : '#333',
-                  }}>
+                  <span style={{ textDecoration: task.completed ? 'line-through' : 'none', fontSize: '18px', fontWeight: '500', color: task.completed ? '#4CAF50' : '#333' }}>
                     {task.taskDescription}
                   </span>
                   {task.dueDate && <div style={{ fontSize: '14px', color: '#777' }}>Due: {task.dueDate}</div>}
                 </div>
               </div>
-              <div style={styles.actions}>
-                <button style={styles.detailButton} onClick={() => handleDetail(task.taskId)}>Details 📄</button>
-                <button style={styles.editButton} onClick={() => handleEdit(task.taskId)}>Edit ✏️</button>
-                <button style={styles.deleteButton} onClick={() => handleDelete(task.taskId)}>Delete 🗑️</button>
+              <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                <button style={{ backgroundColor: '#17a2b8', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleDetail(task.taskId)}>Details 📄</button>
+                <button style={{ backgroundColor: '#1976d2', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleEdit(task.taskId)}>Edit ✏️</button>
+                <button style={{ backgroundColor: '#d32f2f', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleDelete(task.taskId)}>Delete 🗑️</button>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <p style={styles.noTaskText}>No tasks found. Add some!</p>
+        <p style={{ fontSize: '20px', marginTop: '30px', color: '#777' }}>No tasks found. Add some!</p>
       )}
 
-      <button style={styles.backButton} onClick={handleBack}>➕ Add New Task</button>
+      <button style={{ marginTop: '40px', backgroundColor: '#4caf50', border: 'none', color: 'white', padding: '12px 24px', borderRadius: '8px', fontSize: '18px', cursor: 'pointer' }} onClick={handleBack}>
+        ➕ Add New Task
+      </button>
     </div>
   );
 }
-
-const styles = {
-  topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
-  heading: { fontSize: '36px', color: '#333' },
-  notificationIcon: { fontSize: '28px', cursor: 'pointer', position: 'relative' },
-  notificationBadge: { position: 'absolute', top: '-5px', right: '-5px', backgroundColor: 'red', color: 'white', borderRadius: '50%', padding: '2px 6px', fontSize: '12px' },
-  progressBarContainer: { height: '10px', width: '90%', margin: '10px auto', backgroundColor: '#ddd', borderRadius: '10px', overflow: 'hidden' },
-  progressBarFill: { height: '100%', transition: 'width 0.4s ease-in-out' },
-  progressText: { fontSize: '16px', color: '#555', marginBottom: '20px' },
-  notificationPopup: { position: 'absolute', right: '20px', top: '80px', backgroundColor: 'white', boxShadow: '0px 2px 10px rgba(0,0,0,0.2)', padding: '15px', borderRadius: '10px', zIndex: '1000', width: '280px' },
-  notificationItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' },
-  dismissButton: { background: 'none', border: 'none', color: 'red', fontSize: '18px', cursor: 'pointer' },
-  controls: { display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' },
-  searchBox: { padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '250px' },
-  dropdown: { padding: '10px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', width: '180px' },
-  list: { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px' },
-  card: { width: '320px', padding: '20px', borderRadius: '10px', boxShadow: '0px 4px 12px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', transition: 'transform 0.3s' },
-  topRow: { display: 'flex', alignItems: 'center' },
-  checkbox: { width: '22px', height: '22px', cursor: 'pointer' },
-  actions: { marginTop: '20px', display: 'flex', justifyContent: 'space-between' },
-  detailButton: { backgroundColor: '#17a2b8', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
-  editButton: { backgroundColor: '#1976d2', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
-  deleteButton: { backgroundColor: '#d32f2f', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
-  backButton: { marginTop: '40px', backgroundColor: '#4caf50', border: 'none', color: 'white', padding: '12px 24px', borderRadius: '8px', fontSize: '18px', cursor: 'pointer' },
-  noTaskText: { fontSize: '20px', marginTop: '30px', color: '#777' },
-};
 
 export default ViewTasksPage;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Import toast
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function TaskDetailsPage() {
   const { id } = useParams();
@@ -12,14 +13,14 @@ function TaskDetailsPage() {
     const fetchTaskAndBackground = async () => {
       const userEmail = localStorage.getItem('userEmail');
       if (!userEmail) {
-        toast.error('User not logged in.'); // ❗ Toast if user not found
+        toast.error('User not logged in.');
         navigate('/login');
         return;
       }
 
       try {
-        // Fetch task notes
-        const taskResponse = await fetch(`http://localhost:8080/api/todos/${id}`);
+        // ⭐ Fetch task notes with BASE_URL
+        const taskResponse = await fetch(`${BASE_URL}/api/todos/${id}`);
         if (taskResponse.ok) {
           const data = await taskResponse.json();
           setNotes(data.notes || 'No notes available.');
@@ -28,8 +29,8 @@ function TaskDetailsPage() {
           toast.error('Failed to fetch task notes.');
         }
 
-        // Fetch user background
-        const userResponse = await fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
+        // ⭐ Fetch user background with BASE_URL
+        const userResponse = await fetch(`${BASE_URL}/api/users/getUser?email=${encodeURIComponent(userEmail)}`);
         if (userResponse.ok) {
           const userData = await userResponse.json();
           const background = userData.backgroundChoice || 'default.jpg';
@@ -91,7 +92,7 @@ const styles = {
     border: '1px solid #ccc',
     backgroundColor: '#f9f9f9',
     textAlign: 'left',
-    whiteSpace: 'pre-wrap', // preserve line breaks
+    whiteSpace: 'pre-wrap',
   },
   backButton: {
     marginTop: '20px',

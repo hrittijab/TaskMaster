@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Add toast import
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function VerifyPage() {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ function VerifyPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/api/users/verify', {
+      const response = await fetch(`${BASE_URL}/api/users/verify`, { // ⭐ Use BASE_URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -19,13 +20,13 @@ function VerifyPage() {
         body: JSON.stringify({ email, code }),
       });
 
-      const result = await response.text(); // ⭐ Read backend message
+      const result = await response.text();
 
       if (response.ok) {
-        toast.success('Email verified successfully! You can now log in.'); // 🎉 Toast
-        setTimeout(() => navigate('/login'), 2000); // ⏳ Delay before navigation
+        toast.success('Email verified successfully! You can now log in.');
+        setTimeout(() => navigate('/login'), 2000);
       } else {
-        toast.error(result || 'Verification failed. Please try again.'); // ❗ Error Toast
+        toast.error(result || 'Verification failed. Please try again.');
       }
     } catch (error) {
       console.error('Verification error:', error);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Add toast import
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function PickBackgroundPage() {
   const [backgrounds] = useState([
@@ -22,23 +23,23 @@ function PickBackgroundPage() {
   const handleBackgroundSelect = async (backgroundUrl) => {
     const userEmail = localStorage.getItem('userEmail');
     if (!userEmail) {
-      toast.error('User not logged in.'); // 🎯 Toast instead of alert
+      toast.error('User not logged in.');
       navigate('/login');
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${encodeURIComponent(userEmail)}/background`, {
+      const response = await fetch(`${BASE_URL}/api/users/${encodeURIComponent(userEmail)}/background`, { // ⭐ Use BASE_URL
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(backgroundUrl),
       });
 
       if (response.ok) {
-        toast.success('Background updated!'); // 🎉 Toast instead of alert
+        toast.success('Background updated!');
         localStorage.setItem('backgroundChoice', backgroundUrl);
         setSelectedBackground(backgroundUrl);
-        setTimeout(() => navigate('/add-task'), 2000); // 🎯 delay before navigating
+        setTimeout(() => navigate('/add-task'), 2000);
       } else {
         console.error('Failed to save background');
         toast.error('Failed to save background.');

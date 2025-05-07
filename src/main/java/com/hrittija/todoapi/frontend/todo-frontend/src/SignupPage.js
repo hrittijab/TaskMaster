@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Add toast import
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -30,29 +31,29 @@ function SignUpPage() {
     e.preventDefault();
 
     if (passwordStrength < 4) {
-      toast.error("Password not strong enough."); // ❗Toast instead of alert
+      toast.error("Password not strong enough.");
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/users/signup', {
+      const response = await fetch(`${BASE_URL}/api/users/signup`, { // ⭐ Using BASE_URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: email.toLowerCase(),
           firstName,
           lastName,
-          passwordHash: password,
+          passwordHash: password, // ⭐ Correct field for backend
         }),
       });
 
-      const result = await response.text(); // ⭐ Fetch response text
+      const result = await response.text();
 
       if (response.ok) {
-        toast.success('Signup successful! Please verify your email.'); // 🎉 Toast
-        setTimeout(() => navigate('/login'), 2000); // ⏳ Delay to let user read Toast
+        toast.success('Signup successful! Please verify your email.');
+        setTimeout(() => navigate('/login'), 2000);
       } else {
-        toast.error(result || 'Signup failed.'); // ❗ Error Toast
+        toast.error(result || 'Signup failed.');
       }
     } catch (error) {
       console.error('Signup error:', error);

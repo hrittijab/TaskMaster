@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ Add toast import
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function AddTaskPage() {
   const [taskDescription, setTaskDescription] = useState('');
@@ -17,7 +18,7 @@ function AddTaskPage() {
       toast.error('User not logged in.');
       navigate('/login');
     } else {
-      fetch(`http://localhost:8080/api/users/getUser?email=${encodeURIComponent(userEmail)}`)
+      fetch(`${BASE_URL}/api/users/getUser?email=${encodeURIComponent(userEmail)}`) // ⭐ Use BASE_URL
         .then((res) => res.json())
         .then((data) => {
           setFirstName(data.firstName || '');
@@ -43,7 +44,7 @@ function AddTaskPage() {
     const userEmail = localStorage.getItem('userEmail');
 
     try {
-      const response = await fetch('http://localhost:8080/api/todos', {
+      const response = await fetch(`${BASE_URL}/api/todos`, { // ⭐ Use BASE_URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ taskDescription, userEmail, dueDate, notes }),

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ⭐ import toast
+import { toast } from 'react-toastify';
+import BASE_URL from './config'; // ⭐ Import BASE_URL
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/api/users/login', {
+      const response = await fetch(`${BASE_URL}/api/users/login`, { // ⭐ Use BASE_URL here
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -19,16 +20,16 @@ function LoginPage() {
         body: JSON.stringify({ email: email.toLowerCase(), password }),
       });
 
-      const result = await response.text(); // ⭐ get the backend response text
+      const result = await response.text();
 
       if (response.ok) {
         localStorage.setItem('userEmail', email.toLowerCase());
-        toast.success(result); // 🎉 Success toast
-        setTimeout(() => navigate('/add-task'), 2000); // 🎯 small delay before navigating
+        toast.success(result);
+        setTimeout(() => navigate('/add-task'), 2000);
       } else {
         if (response.status === 403) {
           toast.error('Please verify your email before logging in.');
-          setTimeout(() => navigate('/verify'), 2000); // 🎯 small delay before navigating to verify
+          setTimeout(() => navigate('/verify'), 2000);
         } else {
           toast.error(result || 'Login failed. Please try again or signup.');
         }
