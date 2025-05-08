@@ -35,3 +35,8 @@ Passwords are never stored in plain text — always hashed with BCrypt.
 App Secrets (SMTP passwords, AWS credentials) are moved to application-secret.properties and NOT pushed to GitHub.
 
 Environment variables can be used for production deployments.
+
+
+
+[![Watch the Demo](demo_thumbnail.png)](https://drive.google.com/file/d/16fsQ2GzppsAkmMwHf390DImAcGtlD2My/view)
+
