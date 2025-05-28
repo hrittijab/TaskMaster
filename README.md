@@ -38,5 +38,6 @@ Environment variables can be used for production deployments.
 
 
 
-[![Watch the Demo](demo_thumbnail.png)]([https://drive.google.com/file/d/16fsQ2GzppsAkmMwHf390DImAcGtlD2My/view](https://drive.google.com/file/d/16fsQ2GzppsAkmMwHf390DImAcGtlD2My/view?usp=drive_link))
+[![Watch the Demo](demo_thumbnail.png)](https://drive.google.com/file/d/16fsQ2GzppsAkmMwHf390DImAcGtlD2My/view?usp=drive_link)
+
 
